@@ -26,3 +26,8 @@ int main() {
     printf("%d\n", a);
     return s;
 }
+
+
+之前公司為了使用putty進行版控，有簡單學過基本的unix語言，那時候使用的都是vi不像vim有那麼多套件可以使用
+這次透過作業跟老師的課程練習到套件並進行程式的debug感覺很特別，但terminal的debug或顯示執行錯誤就跟文件比較diff一樣訊息比較沒那麼好懂
+肯定還是會比較喜歡window有更多的debug模式
