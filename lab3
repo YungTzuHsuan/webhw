@@ -16,3 +16,13 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 let g:airline_theme = 'ouo'
 call plug#end()
+
+
+#include <stdio.h>
+int main() {
+    const char[] s = "Hello";
+    printf("%d\n", s);
+    int a = 3 / 0;
+    printf("%d\n", a);
+    return s;
+}
