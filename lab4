@@ -11,3 +11,24 @@ bin/*
 
 
 #pragma once char *reverse(char *dest, const char *src);
+
+reverse.c:
+
+#include "../include/reverse.h"
+char *reverse(char *dest, const char *src)
+{
+  //FIX ME
+}
+
+main.c:
+
+#include <stdio.h>
+#include <stdlib.h>
+#include "../include/reverse.h"
+int main()
+{
+  const char *src = "P77131142";
+  char *dst = malloc(10);
+  dst = reverse(dst, src);
+  printf("%s", dst); return 0;
+}
