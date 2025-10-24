@@ -1,28 +1,15 @@
-CC := gcc
-SRCDIR := src
-BUILDDIR := build
-BINDIR := bin
-INCDIR := include
-TARGET := $(BINDIR)/runner
+int len = 0;
+    // 計算字串長度
+    while (src[len] != '\0') {
+        len++;
+    }
 
-SRCEXT := c
-SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
-HEADERS := $(shell find $(INCDIR) -type f -name *.h)
-OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
-CFLAGS := -O2 -Wall
+    // 將字串反轉
+    for (int i = 0; i < len; i++) {
+        dest[i] = src[len - 1 - i];
+    }
 
-all: $(TARGET)
+    // 字串結尾加上 '\0'
+    dest[len] = '\0';
 
-$(TARGET): $(OBJECTS)
-	mkdir -p $(BINDIR)
-	@echo "> Linking..."
-	$(CC) $^ -o $(TARGET)
-
-$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
-	mkdir -p $(BUILDDIR)
-	@echo "> Compiling..."
-	$(CC) $(CFLAGS) -c -o $@ $<
-
-clean:
-	@echo "> Cleaning..."
-	$(RM) -rf $(BUILDDIR) $(TARGET)
+    return dest;
