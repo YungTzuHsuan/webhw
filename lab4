@@ -17,7 +17,14 @@ reverse.c:
 #include "../include/reverse.h"
 char *reverse(char *dest, const char *src)
 {
-  //FIX ME
+  int len = strlen(src);   // 計算來源字串長度
+
+    for (int i = 0; i < len; i++) {
+        dest[i] = src[len - 1 - i];  // 反轉複製
+    }
+
+    dest[len] = '\0';        // 加上字串結尾
+    return dest;             // 回傳結果字串
 }
 
 main.c:
