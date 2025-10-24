@@ -1,41 +1,28 @@
+CC := gcc
+SRCDIR := src
+BUILDDIR := build
+BINDIR := bin
+INCDIR := include
+TARGET := $(BINDIR)/runner
 
+SRCEXT := c
+SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
+HEADERS := $(shell find $(INCDIR) -type f -name *.h)
+OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
+CFLAGS := -O2 -Wall
 
-# Ignore the build and lib dirs
-build
-lib/*
-# Ignore any executables
-bin/*
-# Ignore temporary files
-*.swp
+all: $(TARGET)
 
+$(TARGET): $(OBJECTS)
+	mkdir -p $(BINDIR)
+	@echo "> Linking..."
+	$(CC) $^ -o $(TARGET)
 
+$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
+	mkdir -p $(BUILDDIR)
+	@echo "> Compiling..."
+	$(CC) $(CFLAGS) -c -o $@ $<
 
-#pragma once char *reverse(char *dest, const char *src);
-
-reverse.c:
-
-#include "../include/reverse.h"
-char *reverse(char *dest, const char *src)
-{
-  int len = strlen(src);   // 計算來源字串長度
-
-    for (int i = 0; i < len; i++) {
-        dest[i] = src[len - 1 - i];  // 反轉複製
-    }
-
-    dest[len] = '\0';        // 加上字串結尾
-    return dest;             // 回傳結果字串
-}
-
-main.c:
-
-#include <stdio.h>
-#include <stdlib.h>
-#include "../include/reverse.h"
-int main()
-{
-  const char *src = "P77131142";
-  char *dst = malloc(10);
-  dst = reverse(dst, src);
-  printf("%s", dst); return 0;
-}
+clean:
+	@echo "> Cleaning..."
+	$(RM) -rf $(BUILDDIR) $(TARGET)
