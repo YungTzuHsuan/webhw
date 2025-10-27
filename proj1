@@ -1,10 +1,110 @@
---lab1:
---1:修改顏色
---2:修改terminal名稱 linux@virtualBox => linux@virtualBox-P77131142
---3:修改符號 linux@virtualBox-P77131142:~$ => linux@virtualBox-P77131142:~#
+# lab1:
+# 1:修改顏色
+# 2:修改terminal名稱 linux@virtualBox => linux@virtualBox-P77131142
+# 3:修改符號 linux@virtualBox-P77131142:~$ => linux@virtualBox-P77131142:~#
 
---開啟設定檔
+# 開啟設定檔
 nano ~/.bashrc
---修改需求 \e[1;35m=開始亮粉色  \[\e[0m\]重置顏色
+# 修改需求 \e[1;35m=開始亮粉色  \[\e[0m\]重置顏色
 PS1='\[\e[1;35m\]\u@\h-P77131142\[\e[0m\]:\w# '
 
+
+#lab2:
+
+cd /path/to/Linux_Week5_Miniproject1   # 根目錄（script 要放在這裡）
+ls
+# 應看到 compressed_files/ 和 student_id
+
+
+
+#inux_Week5_Miniproject1/template.sh:
+
+#!/usr/bin/env bash
+set -euo pipefail
+shopt -s nullglob
+
+ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$ROOT_DIR"
+
+# 建立分類資料夾跟輸出檔案，uncompressed/放解壓後的實際內容
+mkdir -p zip rar "tar.gz" unknown uncompressed
+: > missing_list
+: > wrong_list
+
+# 1. classify files from compressed_files/
+if [[ ! -d compressed_files ]]; then
+  echo "Error: compressed_files/ not found in $ROOT_DIR" >&2
+  exit 1
+fi
+
+echo "Classifying files..."
+for f in compressed_files/*; do
+  [[ -f "$f" ]] || continue
+  fname=$(basename "$f")
+  case "$fname" in
+    *.zip)  mv -n -- "$f" zip/ ;;
+    *.tar.gz|*.tgz) mv -n -- "$f" "tar.gz"/ ;;
+    *.rar)  mv -n -- "$f" rar/ ;;
+    *)      mv -n -- "$f" unknown/ ;;
+  esac
+done
+
+# 2. check student_id list for missing/unknown/wrong
+if [[ ! -f student_id ]]; then
+  echo "Warning: student_id file not found; skipping missing/wrong check."
+else
+  echo "Checking student_id list..."
+  while IFS= read -r id || [[ -n "$id" ]]; do
+    # trim
+    id=$(echo "$id" | tr -d '\r\n' | xargs)
+    [[ -z "$id" ]] && continue
+    found=0
+    # search in classified folders
+    for dir in zip "tar.gz" rar unknown; do
+      if compgen -G "$dir/${id}*" > /dev/null; then
+        found=1
+        if [[ "$dir" == "unknown" ]]; then
+          echo "$id" >> wrong_list
+        fi
+      fi
+    done
+    if [[ $found -eq 0 ]]; then
+      echo "$id" >> missing_list
+    fi
+  done < student_id
+fi
+
+# 3. uncompress zip
+echo "Uncompressing zip files..."
+for f in zip/*.zip; do
+  [[ -e "$f" ]] || continue
+  base=$(basename "$f")
+  id=${base%%.*}
+  target="uncompressed/$id"
+  mkdir -p "$target"
+  unzip -q "$f" -d "$target" || echo "unzip failed: $f" >&2
+done
+
+# 4. uncompress tar.gz
+echo "Uncompressing tar.gz files..."
+for f in "tar.gz"/*.tar.gz "tar.gz"/*.tgz; do
+  [[ -e "$f" ]] || continue
+  base=$(basename "$f")
+  id=${base%%.*}
+  target="uncompressed/$id"
+  mkdir -p "$target"
+  tar -xzf "$f" -C "$target" || echo "tar failed: $f" >&2
+done
+
+# 5. uncompress rar
+echo "Uncompressing rar files..."
+for f in rar/*.rar; do
+  [[ -e "$f" ]] || continue
+  base=$(basename "$f")
+  id=${base%%.*}
+  target="uncompressed/$id"
+  mkdir -p "$target"
+  unrar x -inul "$f" "$target" || echo "unrar failed: $f" >&2
+done
+
+echo "Done. Check missing_list, wrong_list, and uncompressed/ directory."
