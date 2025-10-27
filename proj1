@@ -1,0 +1,10 @@
+--lab1:
+--1:修改顏色
+--2:修改terminal名稱 linux@virtualBox => linux@virtualBox-P77131142
+--3:修改符號 linux@virtualBox-P77131142:~$ => linux@virtualBox-P77131142:~#
+
+--開啟設定檔
+nano ~/.bashrc
+--修改需求 \e[1;35m=開始亮粉色  \[\e[0m\]重置顏色
+PS1='\[\e[1;35m\]\u@\h-P77131142\[\e[0m\]:\w# '
+
