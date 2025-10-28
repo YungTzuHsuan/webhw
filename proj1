@@ -17,6 +17,8 @@ ls
 
 
 
+found=$(ls compressed_files/"${id}"* 2>/dev/null || true)
+
 #inux_Week5_Miniproject1/template.sh:
 
 #!/usr/bin/env bash
